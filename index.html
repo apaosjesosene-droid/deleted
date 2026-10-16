@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova IXL | Advanced Learning Workspace</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Background Particle Canvas -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Top Navigation Bar -->
+    <header class="navbar" id="mainNavbar">
+        <div class="nav-brand">
+            <div class="brand-logo">
+                <i class="fa-solid fa-atom"></i>
+            </div>
+            <div class="brand-text">
+                <span class="brand-title">NOVA <span class="accent-purple">IXL</span></span>
+                <span class="brand-subtitle">STUDENT WORKSPACE</span>
+            </div>
+        </div>
+
+        <nav class="nav-links" id="navLinks">
+            <button class="nav-btn active" data-tab="dashboard"><i class="fa-solid fa-chart-pie"></i> Analytics</button>
+            <button class="nav-btn" data-tab="skills"><i class="fa-solid fa-graduation-cap"></i> Skill Mastery</button>
+            <button class="nav-btn" data-tab="studio"><i class="fa-solid fa-terminal"></i> Script Studio</button>
+        </nav>
+
+        <div class="nav-actions">
+            <button class="icon-btn" id="audioToggleBtn" title="Toggle Audio Feedback">
+                <i class="fa-solid fa-volume-high" id="audioIcon"></i>
+            </button>
+
+            <!-- User Avatar & License Gate Trigger -->
+            <div class="user-profile-pill" id="userProfileBtn" title="Account Settings & License Key">
+                <div class="user-avatar" id="userAvatarInitials">US</div>
+                <div class="user-info">
+                    <span class="user-name" id="navUserName">Student</span>
+                    <span class="user-license-badge" id="navLicenseBadge">Trial / Free</span>
+                </div>
+                <i class="fa-solid fa-key license-key-icon"></i>
+            </div>
+
+            <button class="btn-secondary btn-sm" id="logoutBtn" style="display: none;"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="app-container">
+
+        <!-- VIEW 1: AUTH / LOGIN PORTAL -->
+        <section id="loginView" class="view-section active-view">
+            <div class="login-wrapper">
+                <div class="glass-card login-card">
+                    <div class="login-header">
+                        <div class="login-badge"><i class="fa-solid fa-shield-halved"></i> SECURE SESSION</div>
+                        <h2>Welcome to Nova IXL</h2>
+                        <p>Enter your student account details to access your workspace</p>
+                    </div>
+
+                    <form id="loginForm" class="login-form">
+                        <div class="input-group">
+                            <label for="loginEmail"><i class="fa-solid fa-envelope"></i> Student Email / Handle</label>
+                            <input type="text" id="loginEmail" placeholder="student@nova-edu.io" required autocomplete="username">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="loginPassword"><i class="fa-solid fa-lock"></i> Password</label>
+                            <input type="password" id="loginPassword" placeholder="••••••••••••" required autocomplete="current-password">
+                        </div>
+
+                        <div class="login-options">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="rememberMe" checked>
+                                <span class="checkmark"></span>
+                                Save session locally
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-primary btn-block"><i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Nova IXL</button>
+
+                        <button type="button" class="btn-outline btn-block mt-2" id="tempCredentialsBtn">
+                            <i class="fa-solid fa-dice"></i> Fill in temporary credentials ⚡
+                        </button>
+                    </form>
+
+                    <div class="login-footer">
+                        <p><i class="fa-solid fa-circle-info"></i> All local study statistics, scripts, and practice logs are encrypted locally in your web session.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: DASHBOARD VIEW -->
+        <section id="dashboardView" class="view-section">
+            <div class="dashboard-grid">
+                
+                <!-- Stat Cards Row -->
+                <div class="stat-card glass-card">
+                    <div class="stat-icon purple"><i class="fa-solid fa-fire"></i></div>
+                    <div class="stat-details">
+                        <span class="stat-label">Active Study Streak</span>
+                        <h3 class="stat-value" id="dashStreakVal">12 Days</h3>
+                        <span class="stat-subtext text-success" id="dashStreakSub"><i class="fa-solid fa-trending-up"></i> Top 5% Student Rank</span>
+                    </div>
+                </div>
+
+                <div class="stat-card glass-card">
+                    <div class="stat-icon blue"><i class="fa-solid fa-bullseye"></i></div>
+                    <div class="stat-details">
+                        <span class="stat-label">Questions Solved</span>
+                        <h3 class="stat-value" id="dashSolvedVal">428</h3>
+                        <span class="stat-subtext text-purple" id="dashAccuracyVal">98.4% Accuracy</span>
+                    </div>
+                </div>
+
+                <div class="stat-card glass-card">
+                    <div class="stat-icon gold"><i class="fa-solid fa-award"></i></div>
+                    <div class="stat-details">
+                        <span class="stat-label">Mastery Status</span>
+                        <h3 class="stat-value" id="dashMasteryVal">Gold Rank</h3>
+                        <span class="stat-subtext text-gold" id="dashLicenseSub">8h Free Trial License</span>
+                    </div>
+                </div>
+
+                <div class="stat-card glass-card">
+                    <div class="stat-icon green"><i class="fa-solid fa-clock"></i></div>
+                    <div class="stat-details">
+                        <span class="stat-label">Study Time</span>
+                        <h3 class="stat-value" id="dashTimeVal">14h 20m</h3>
+                        <span class="stat-subtext text-muted">This week</span>
+                    </div>
+                </div>
+
+                <!-- Main Chart & Activity Panel -->
+                <div class="dashboard-main-col glass-card">
+                    <div class="panel-header">
+                        <div>
+                            <h3 class="panel-title"><i class="fa-solid fa-chart-line"></i> Performance Analytics</h3>
+                            <p class="panel-subtitle">Real-time SmartScore trajectory and practice metrics</p>
+                        </div>
+                        <div class="pill-group">
+                            <button class="pill-btn active">SmartScore</button>
+                            <button class="pill-btn">Accuracy</button>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <svg class="analytics-svg" viewBox="0 0 600 200" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="chartGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#9d4edd" stop-opacity="0.5"/>
+                                    <stop offset="100%" stop-color="#9d4edd" stop-opacity="0.0"/>
+                                </linearGradient>
+                            </defs>
+                            <path class="chart-area" d="M0,160 Q100,120 200,90 T400,50 T600,20 L600,200 L0,200 Z" fill="url(#chartGrad)"/>
+                            <path class="chart-line" d="M0,160 Q100,120 200,90 T400,50 T600,20" fill="none" stroke="#9d4edd" stroke-width="3"/>
+                            
+                            <!-- SVG Data Nodes -->
+                            <circle cx="0" cy="160" r="4" fill="#9d4edd"/>
+                            <circle cx="120" cy="115" r="4" fill="#9d4edd"/>
+                            <circle cx="240" cy="80" r="4" fill="#9d4edd"/>
+                            <circle cx="360" cy="55" r="4" fill="#9d4edd"/>
+                            <circle cx="480" cy="35" r="4" fill="#9d4edd"/>
+                            <circle cx="600" cy="20" r="6" fill="#c77dff" stroke="#ffffff" stroke-width="2"/>
+                        </svg>
+                        <div class="chart-labels">
+                            <span>Mon</span>
+                            <span>Tue</span>
+                            <span>Wed</span>
+                            <span>Thu</span>
+                            <span>Fri</span>
+                            <span>Sat</span>
+                            <span>Sun</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side Telemetry Feed -->
+                <div class="dashboard-side-col glass-card">
+                    <div class="panel-header">
+                        <h3 class="panel-title"><i class="fa-solid fa-list-check"></i> Recent Activity</h3>
+                    </div>
+
+                    <div class="activity-feed" id="activityFeed">
+                        <!-- Activity items populated dynamically -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- VIEW 3: SKILL MASTERY VIEW (IXL-STYLE) -->
+        <section id="skillsView" class="view-section">
+            <div class="skills-layout">
+                <!-- Sidebar Category Selector -->
+                <div class="skills-sidebar glass-card">
+                    <h3 class="panel-title mb-3"><i class="fa-solid fa-layer-group"></i> Subjects</h3>
+                    
+                    <div class="subject-select-wrapper mb-3">
+                        <label for="subjectDropdown" class="form-label-sm"><i class="fa-solid fa-book"></i> Active Subject</label>
+                        <select id="subjectDropdown" class="select-input">
+                            <optgroup label="Mathematics">
+                                <option value="math_prealg">Pre-Algebra</option>
+                                <option value="math_alg1" selected>Algebra 1</option>
+                                <option value="math_geom">Geometry</option>
+                                <option value="math_alg2">Algebra 2</option>
+                                <option value="math_precalc">Pre-Calculus</option>
+                                <option value="math_calc">AP Calculus BC</option>
+                            </optgroup>
+                            <optgroup label="Language Arts">
+                                <option value="la_grammar">Grammar & Mechanics</option>
+                                <option value="la_vocab">Vocabulary Building</option>
+                                <option value="la_writing">Writing & Composition</option>
+                                <option value="la_lit">Literature Analysis</option>
+                            </optgroup>
+                            <optgroup label="Sciences">
+                                <option value="sci_phys_sci">Physical Science</option>
+                                <option value="sci_bio">Biology</option>
+                                <option value="sci_chem">Chemistry</option>
+                                <option value="sci_physics">Physics</option>
+                            </optgroup>
+                            <optgroup label="Social Studies">
+                                <option value="ss_ushistory">U.S. History</option>
+                                <option value="ss_worldhistory">World History</option>
+                                <option value="ss_civics">Civics & Government</option>
+                                <option value="ss_econ">Economics</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="skill-category-list" id="skillCategoryList">
+                        <!-- Categories dynamically built -->
+                    </div>
+                </div>
+
+                <!-- Practice Work Area -->
+                <div class="skills-main glass-card">
+                    
+                    <!-- Skill Header & SmartScore Bar -->
+                    <div class="skill-practice-header">
+                        <div class="skill-title-meta">
+                            <span class="skill-code-badge" id="skillCodeBadge">A.1</span>
+                            <div>
+                                <h2 class="skill-name-title" id="skillNameTitle">Evaluate variable expressions with whole numbers</h2>
+                                <p class="skill-desc-subtitle" id="skillDescSubtitle">Substitute values into expressions and simplify using order of operations.</p>
+                            </div>
+                        </div>
+
+                        <!-- SmartScore Indicator -->
+                        <div class="smartscore-box">
+                            <div class="smartscore-circle" id="smartScoreCircle">
+                                <span class="smartscore-val" id="smartScoreVal">0</span>
+                            </div>
+                            <div class="smartscore-label">SmartScore<br><small id="smartScoreRank">Practice</small></div>
+                        </div>
+                    </div>
+
+                    <!-- Question Container -->
+                    <div class="question-card" id="questionCard">
+                        <div class="question-meta">
+                            <span class="q-num"><i class="fa-solid fa-circle-question"></i> Question <span id="qCountNum">1</span></span>
+                            <span class="q-difficulty" id="qDiffBadge">Difficulty: Standard</span>
+                        </div>
+
+                        <div class="question-prompt" id="questionPrompt">
+                            <!-- Question prompt injected via JS -->
+                        </div>
+
+                        <!-- Answer Input / Options -->
+                        <div class="answer-box" id="answerBox">
+                            <!-- Injected choices or text input -->
+                        </div>
+
+                        <!-- Action Controls -->
+                        <div class="practice-controls">
+                            <button class="btn-primary" id="submitAnswerBtn"><i class="fa-solid fa-paper-plane"></i> Submit Answer</button>
+                            
+                            <!-- Custom Auto Answer Button in Dark Purple Gradient -->
+                            <button class="btn-dark-purple" id="autoAnswerBtn">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> ⚡ Auto-Answer / Complete
+                            </button>
+                        </div>
+
+                        <!-- Feedback Box -->
+                        <div class="feedback-banner" id="feedbackBanner" style="display: none;">
+                            <div class="feedback-icon" id="feedbackIcon"></div>
+                            <div class="feedback-text">
+                                <h4 id="feedbackTitle">Correct!</h4>
+                                <p id="feedbackDetail">Great job! SmartScore increased by +12 points.</p>
+                            </div>
+                            <button class="btn-secondary btn-sm" id="nextQuestionBtn">Next Question <i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: SCRIPT STUDIO VIEW -->
+        <section id="studioView" class="view-section">
+            <div class="studio-grid">
+                
+                <div class="glass-card studio-editor-card">
+                    <div class="panel-header">
+                        <div class="panel-title-group">
+                            <h3 class="panel-title"><i class="fa-solid fa-code"></i> Nova Script Executor Studio</h3>
+                            <span class="badge-tag">JavaScript Engine</span>
+                        </div>
+                        <div class="studio-actions">
+                            <select id="scriptPresetSelect" class="select-input-sm">
+                                <option value="math_solver">Preset: Math Solver</option>
+                                <option value="text_analyzer">Preset: Text Summarizer</option>
+                                <option value="quiz_helper">Preset: Quiz Automation Helper</option>
+                            </select>
+                            <button class="btn-primary btn-sm" id="runScriptBtn"><i class="fa-solid fa-play"></i> Execute</button>
+                            <button class="btn-secondary btn-sm" id="clearScriptBtn"><i class="fa-solid fa-eraser"></i> Clear</button>
+                        </div>
+                    </div>
+
+                    <div class="editor-container">
+                        <div class="line-numbers" id="lineNumbers">1</div>
+                        <textarea id="scriptEditorCode" spellcheck="false">// Nova IXL Script Studio v4.0
+// Write custom logic or execute learning helper tools directly.
+
+function solveExpression(x, y) {
+    console.log(`Solving quadratic node with x=${x}, y=${y}`);
+    return (x * x) + (2 * y) - 5;
+}
+
+const result = solveExpression(4, 7);
+console.log("Calculated Result:", result);
+</textarea>
+                    </div>
+                </div>
+
+                <div class="glass-card studio-console-card">
+                    <div class="panel-header">
+                        <h3 class="panel-title"><i class="fa-solid fa-terminal"></i> Console Output</h3>
+                        <button class="btn-outline btn-sm" id="clearConsoleBtn"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+
+                    <div class="console-output" id="consoleOutput">
+                        <div class="console-line system-line">[SYSTEM] Script Studio engine initialized. Ready for execution.</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- LICENSE KEY GATE MODAL (Triggered by Top Right User Avatar) -->
+    <div class="modal-overlay" id="licenseModal">
+        <div class="glass-card modal-card">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div class="modal-icon"><i class="fa-solid fa-key"></i></div>
+                    <div>
+                        <h3>License Key Verification</h3>
+                        <p>Enter your 24-character Nova license key to unlock God status</p>
+                    </div>
+                </div>
+                <button class="modal-close-btn" id="closeLicenseModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="license-status-banner" id="licenseStatusBanner">
+                    <i class="fa-solid fa-circle-info"></i> Active Status: <strong id="activeLicenseText">Free / 8-Hour Trial</strong>
+                </div>
+
+                <div class="input-group">
+                    <div class="label-row">
+                        <label for="licenseKeyInput"><i class="fa-solid fa-lock"></i> 24-Character License Key</label>
+                        <span class="char-counter" id="keyCharCounter">0 / 24</span>
+                    </div>
+                    <input type="text" id="licenseKeyInput" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX" maxlength="24" autocomplete="off" spellcheck="false">
+                </div>
+
+                <div class="trial-option-card">
+                    <div class="trial-text">
+                        <strong>Need immediate full access?</strong>
+                        <p>Activate your free 8-hour trial license tied to your current student session.</p>
+                    </div>
+                    <button type="button" class="btn-secondary btn-sm" id="activateTrialBtn">
+                        <i class="fa-solid fa-bolt"></i> Add free trial license for 8 hours
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelLicenseBtn">Cancel</button>
+                <button class="btn-primary" id="submitLicenseKeyBtn"><i class="fa-solid fa-shield-check"></i> Verify & Redeem Key</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
